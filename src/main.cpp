@@ -14,6 +14,6 @@ int main()
     Controller controller(v, s);
 
     controller.execute();
-
+    controller.sendData("player #"+ Solver::index + "win!");
     return 0;
 }

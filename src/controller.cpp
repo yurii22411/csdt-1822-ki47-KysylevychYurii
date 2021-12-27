@@ -6,6 +6,24 @@
 #include "view.h"
 #include "solver.h"
 
+#include <cstdint>
+#include <bsoncxx/json.hpp>
+#include <mongocxx/client.hpp>
+#include <mongocxx/stdx.hpp>
+#include <mongocxx/uri.hpp>
+#include <mongocxx/instance.hpp>
+#include <bsoncxx/builder/stream/helpers.hpp>
+#include <bsoncxx/builder/stream/document.hpp>
+#include <bsoncxx/builder/stream/array.hpp>
+
+
+using bsoncxx::builder::stream::close_array;
+using bsoncxx::builder::stream::close_document;
+using bsoncxx::builder::stream::document;
+using bsoncxx::builder::stream::finalize;
+using bsoncxx::builder::stream::open_array;
+using bsoncxx::builder::stream::open_document;
+
 void Controller::execute()
 {
 
@@ -24,6 +42,7 @@ void Controller::execute()
     view.drawGridState(solver.getGameField(), fieldTypeP2);
     view.drawGridLines();
     view.update();
+	
 
     while (!quit)
     {
@@ -98,6 +117,41 @@ void Controller::execute()
     }
 }
 
+
+{
+void Controller::CreateDoc()
+{
+   "name" : "MongoDB",
+   "type" : "database",
+   "winner" : "",
+   "versions": [ "v3.2", "v3.0", "v2.6" ],
+   "info" : {
+               "x" : 203,
+               "y" : 102
+            }
+}
+
+}
+void Controller::sendData(string s)
+{
+Controller::connectDb(mongosh "mongodb+srv://cluster0.bxwn6.mongodb.net/myFirstDatabase" --username yura224112);
+Controller::CreateDoc();
+
+auto builder = bsoncxx::builder::stream::document{};
+bsoncxx::document::value doc_value = builder
+  << "name" << "MongoDB"
+  << "type" << "database"
+  << "winner" << s
+  << "versions" << bsoncxx::builder::stream::open_array
+    << "v3.2" << "v3.0" << "v2.6"
+  << close_array
+  << "info" << bsoncxx::builder::stream::open_document
+    << "x" << 203
+    << "y" << 102
+  << bsoncxx::builder::stream::close_document
+  << bsoncxx::builder::stream::finalize;
+}
+
 /* PRIVATE */
 
 /*
@@ -111,4 +165,10 @@ void Controller::makeFirstMove(Solver &solver, const FieldType type)
     std::uniform_int_distribution<> dis(0, (frameSize * frameSize) - 1);
     int startingPosition = dis(gen);
     solver.setFieldValue(startingPosition, type);
+}
+void Controller::connectDb(uri)
+{
+mongocxx::instance instance{}; 
+mongocxx::uri uri("mongodb://localhost:27017");
+mongocxx::client client(uri);
 }
