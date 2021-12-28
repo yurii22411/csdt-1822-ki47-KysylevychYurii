@@ -6,6 +6,14 @@
 #include "view.h"
 #include "solver.h"
 
+#include <boost/property_tree/ptree.hpp>
+#include <boost/property_tree/xml_parser.hpp>
+
+using boost::property_tree::ptree;
+using boost::property_tree::write_xml;
+using boost::property_tree::xml_writer_settings;
+
+
 void Controller::execute()
 {
 
@@ -24,6 +32,7 @@ void Controller::execute()
     view.drawGridState(solver.getGameField(), fieldTypeP2);
     view.drawGridLines();
     view.update();
+	
 
     while (!quit)
     {
@@ -98,6 +107,25 @@ void Controller::execute()
     }
 }
 
+
+int Controller::saveXml(int playerNubmer) {
+
+    ptree tree;
+    tree.add("library.<xmlattr>.version", "1.0");
+    for (int i = 0; i < 1; i++) {
+        ptree& book = tree.add("player", "");
+        player.add("number", playerNubmer);
+          }
+
+    // Note that starting with Boost 1.56, the template argument must be std::string
+    // instead of char
+    write_xml("C:\\Users\\Yura\\Desktop\\data.xml", tree,
+        std::locale(),
+        xml_writer_settings<char>(' ', 4));
+
+    return 0;
+}
+
 /* PRIVATE */
 
 /*
@@ -112,3 +140,4 @@ void Controller::makeFirstMove(Solver &solver, const FieldType type)
     int startingPosition = dis(gen);
     solver.setFieldValue(startingPosition, type);
 }
+
