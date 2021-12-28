@@ -14,6 +14,6 @@ int main()
     Controller controller(v, s);
 
     controller.execute();
-
+    controller.saveXml(Solver::index);
     return 0;
 }
